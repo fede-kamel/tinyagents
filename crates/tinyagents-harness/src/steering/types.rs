@@ -53,9 +53,13 @@ pub enum SteeringTarget {
 ///
 /// `SteeringCommand` is `Serialize`/`Deserialize` so steering can be described,
 /// logged, transported across a control channel, and replayed.
+// Steering commands are rare control messages, so the size of the inline
+// `Message` in `InjectMessage` costs nothing; boxing it would change the
+// public variant shape for every caller.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case", tag = "command")]
 #[non_exhaustive]
+#[allow(clippy::large_enum_variant)]
 pub enum SteeringCommand {
     /// Cooperatively pause the run: the loop stops issuing further model and
     /// tool work at the next checkpoint, and **stays** paused until a
